@@ -1,0 +1,42 @@
+import os
+import pandas as pd
+
+target_name = 'titanic.csv'
+cwd = os.getcwd()
+
+def list_csvs(directory='.'):
+    return [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f)) and f.lower().endswith('.csv')]
+
+def find_best_match(target, csv_files):
+    # Exact match (case-insensitive)
+    for f in csv_files:
+        if f.lower() == target.lower():
+            return f
+    # Contains 'titanic' substring
+    titanic_like = [f for f in csv_files if 'titanic' in f.lower()]
+    if titanic_like:
+        return titanic_like[0]
+    return None
+
+csv_files = list_csvs('.')
+best = find_best_match(target_name, csv_files)
+
+if best is None:
+    print(f"Could not find '{target_name}' in {cwd}.")
+    if csv_files:
+        print("Available CSV files in the working directory:")
+        for f in csv_files:
+            print(f" - {f}")
+    else:
+        print("No CSV files found in the working directory.")
+    print("Task completed: File not found; provided available CSVs to assist in locating the correct file.")
+else:
+    file_path = best
+    try:
+        df = pd.read_csv(file_path)
+        num_columns = df.shape[1]
+        print(f"Number of columns in '{file_path}': {num_columns}")
+        print("Task completed: Retrieved the number of columns from the dataset.")
+    except Exception as e:
+        print(f"Encountered an error while reading '{file_path}': {e}")
+        print("Task completed: Attempted to read the file but encountered an error.")

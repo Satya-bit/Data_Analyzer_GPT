@@ -1,0 +1,10 @@
+import pandas as pd
+
+# Read the data from the CSV file
+data = pd.read_csv('data.csv')
+
+# Get the number of columns
+num_columns = len(data.columns)
+
+# Print the result
+print(f"The number of columns in the dataset is: {num_columns}")

@@ -1,0 +1,103 @@
+import os
+import sys
+
+# Import required libraries (should be installed already)
+try:
+    import pandas as pd
+    import matplotlib.pyplot as plt
+except ImportError as e:
+    raise
+
+# 1) Load the dataset
+csv_path = "data.csv"
+if not os.path.exists(csv_path):
+    raise FileNotFoundError(f"Could not find {csv_path} in the working directory.")
+
+df = pd.read_csv(csv_path)
+
+# 2) Detect the gender column
+def find_gender_column(dataframe):
+    lower_cols = [c.lower().strip() for c in dataframe.columns]
+    preferred_names = ['gender', 'sex', 'gender_identity', 'biological_sex']
+    for target in preferred_names:
+        if target in lower_cols:
+            return dataframe.columns[lower_cols.index(target)]
+    # Heuristic: search for a column whose values look like male/female
+    def standardize_gender_value(v):
+        if pd.isna(v):
+            return None
+        if isinstance(v, (int, float)):
+            return None
+        s = str(v).strip().lower()
+        if s in {"m", "male", "man", "boy"}:
+            return "Male"
+        if s in {"f", "female", "woman", "girl"}:
+            return "Female"
+        if "female" in s:
+            return "Female"
+        if "male" in s:
+            return "Male"
+        return None
+
+    candidate = None
+    best_coverage = 0
+    for col in dataframe.columns:
+        series = dataframe[col]
+        if series.dtype.kind not in ("O", "U", "S"):
+            continue
+        sample_vals = series.dropna().astype(str).unique()
+        sample_vals = sample_vals[:200]
+        mapped = [standardize_gender_value(v) for v in sample_vals]
+        total_nonnull = sum(1 for m in mapped if m is not None)
+        if total_nonnull >= 2 and set(m for m in mapped if m is not None) & {"Male", "Female"}:
+            mapped_full = series.map(standardize_gender_value)
+            coverage = mapped_full.notna().mean()
+            if coverage > best_coverage and coverage >= 0.3:
+                best_coverage = coverage
+                candidate = col
+    return candidate
+
+gender_col = find_gender_column(df)
+if not gender_col:
+    print("Could not automatically detect a gender column. Available columns are:")
+    print(list(df.columns))
+    sys.exit(0)
+
+# 3) Standardize and count Male/Female
+def standardize_gender_value(v):
+    if pd.isna(v):
+        return None
+    if isinstance(v, (int, float)):
+        return None
+    s = str(v).strip().lower()
+    if s in {"m", "male", "man", "boy"}:
+        return "Male"
+    if s in {"f", "female", "woman", "girl"}:
+        return "Female"
+    if "female" in s:
+        return "Female"
+    if "male" in s:
+        return "Male"
+    return None
+
+mapped_gender = df[gender_col].map(standardize_gender_value)
+male_count = int((mapped_gender == "Male").sum())
+female_count = int((mapped_gender == "Female").sum())
+unrecognized_count = int(mapped_gender.isna().sum())
+
+# 4) Plot and save bar chart
+labels = ["Male", "Female"]
+values = [male_count, female_count]
+
+plt.figure(figsize=(6, 4))
+bars = plt.bar(labels, values, color=["#4C78A8", "#F58518"])
+plt.title("Gender Distribution")
+plt.ylabel("Count")
+for bar, val in zip(bars, values):
+    plt.text(bar.get_x() + bar.get_width()/2, bar.get_height(), str(val), ha='center', va='bottom')
+plt.tight_layout()
+output_path = "output.png"
+plt.savefig(output_path, dpi=150)
+plt.close()
+
+print(f"Analysis complete.\nDetected gender column: '{gender_col}'.\nMale: {male_count}\nFemale: {female_count}\nUnrecognized/Other/Missing: {unrecognized_count}\nBar chart saved as {output_path}.")
