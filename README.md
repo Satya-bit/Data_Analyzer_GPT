@@ -1,9 +1,11 @@
 # GPT Analyzer
 
+<img width="700" height="350" alt="image" src="https://github.com/user-attachments/assets/0949ae93-f991-4423-b6bf-a694df7444d3" />
+
+
 ## Overview
 GPT Analyzer is an interactive tool designed to simplify data analysis for everyone. It uses OpenAI's GPT models to generate Python code for analyzing CSV files, executes the code securely in Docker, and provides results and visualizations.
 
-![GPT Analyzer Screenshot]
 
 ## Features
 - **Drag-and-Drop CSV Upload**: Upload your data files effortlessly.
