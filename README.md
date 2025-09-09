@@ -49,8 +49,6 @@ GPT Analyzer is an interactive tool designed to simplify data analysis for every
 2. **Ask Questions**: Use the chat interface to ask questions like "How many rows are in my data?".
 3. **View Results**: See the generated Python code, execution results, and visualizations.
 
-![Example Workflow](images/workflow_example.png)
-
 
 
 
