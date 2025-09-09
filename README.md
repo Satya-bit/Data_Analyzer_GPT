@@ -14,6 +14,14 @@ GPT Analyzer is an interactive tool designed to simplify data analysis for every
 - **Secure Execution**: Runs code in a Docker container for safety.
 - **Visualization Support**: Creates charts and saves them as `output.png`.
 
+## Images
+
+<img width="1879" height="857" alt="a1" src="https://github.com/user-attachments/assets/6d3e1803-9b42-4bea-a1b9-09c0828508f5" />
+
+<img width="1838" height="594" alt="a2" src="https://github.com/user-attachments/assets/847a0d89-fa40-4812-940d-9bbdd6ff217b" />
+
+<img width="1759" height="685" alt="a3" src="https://github.com/user-attachments/assets/2966c1d0-758c-4e3c-b9e6-fc7372d0c553" />
+
 ## Technologies Used
 - **Streamlit**: For the user-friendly web interface.
 - **OpenAI GPT Models**: For generating Python code dynamically.
